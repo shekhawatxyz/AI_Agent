@@ -17,8 +17,11 @@ def main():
         contents=a[1],
         # contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum.",
     )
-    print("Prompt tokens:", response.usage_metadata.prompt_token_count)
-    print("Response tokens:", response.usage_metadata.candidates_token_count)
+    VERBOSE = "--verbose" in a
+    if VERBOSE:
+        print("User prompt:", a[1])
+        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+        print("Response tokens:", response.usage_metadata.candidates_token_count)
     print("Response:")
     print(response.text)
 
