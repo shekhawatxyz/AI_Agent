@@ -3,12 +3,16 @@ import functions.get_files_info
 import functions.write_file
 import functions.run_python_file
 
-print(functions.run_python_file.run_python_file("calculator", "main.py"))
-print(functions.run_python_file.run_python_file("calculator", "main.py", ["3+5"]))
-print(functions.run_python_file.run_python_file("calculator", "tests.py"))
-print(functions.run_python_file.run_python_file("calculator", "../main.py"))
-print(functions.run_python_file.run_python_file("calculator", "nonexistent.py"))
-print(functions.run_python_file.run_python_file("calculator", "lorem.txt"))
+print(functions.get_files_info.get_files_info("/workspace", directory="."))
+print(functions.get_files_info.get_files_info("/workspace", directory="pkg"))
+# print(functions.get_files_info.get_files_info({"directory": "."}))
+# print(functions.get_files_info.get_files_info({"directory": "pkg"}))
+# print(functions.run_python_file.run_python_file("calculator", "main.py"))
+# print(functions.run_python_file.run_python_file("calculator", "main.py", ["3+5"]))
+# print(functions.run_python_file.run_python_file("calculator", "tests.py"))
+# print(functions.run_python_file.run_python_file("calculator", "../main.py"))
+# print(functions.run_python_file.run_python_file("calculator", "nonexistent.py"))
+# print(functions.run_python_file.run_python_file("calculator", "lorem.txt"))
 # print(
 #     functions.write_file.write_file(
 #         "calculator", "lorem.txt", "wait, this isn't lorem ipsum"
