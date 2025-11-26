@@ -33,33 +33,47 @@ def main():
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
-
     generate_content(client, messages, verbose)
 
 
 def generate_content(client, messages, verbose):
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=[available_functions], system_instruction=system_prompt
-        ),
-    )
-    if verbose:
-        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
-        print("Response tokens:", response.usage_metadata.candidates_token_count)
+    for _ in range(20):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash-001",
+                contents=messages,
+                config=types.GenerateContentConfig(
+                    tools=[available_functions], system_instruction=system_prompt
+                ),
+            )
+            for candidate in response.candidates:
+                messages.append(candidate.content)
+            if verbose:
+                print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+                print(
+                    "Response tokens:", response.usage_metadata.candidates_token_count
+                )
 
-    if not response.function_calls:
-        return response.text
-    some_list = []
-    for function_call_part in response.function_calls:
-        #     print(f"Calling function: {function_call_part.name}({function_call_part.args})")
-        function_call_result = call_function(function_call_part, verbose)
-        if not function_call_result.parts[0].function_response.response:
-            raise Exception("Function call did not return expected response")
-        some_list.append(function_call_result.parts[0])
-        if verbose:
-            print(f"-> {function_call_result.parts[0].function_response.response}")
+            some_list = []
+            if response.function_calls:
+                for function_call_part in response.function_calls:
+                    #     print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+                    function_call_result = call_function(function_call_part, verbose)
+                    if not function_call_result.parts[0].function_response.response:
+                        raise Exception(
+                            "Function call did not return expected response"
+                        )
+                    some_list.append(function_call_result.parts[0])
+                    if verbose:
+                        print(
+                            f"-> {function_call_result.parts[0].function_response.response}"
+                        )
+                messages.append(types.Content(role="user", parts=some_list))
+            if not response.function_calls and response.text:
+                print(response.text)
+                break
+        except Exception as e:
+            return f"Error: {e}"
 
 
 if __name__ == "__main__":
