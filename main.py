@@ -23,6 +23,10 @@ def main():
         sys.exit(1)
 
     api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("Error: GEMINI_API_KEY is not set. Create a .env file from .env.example.")
+        sys.exit(1)
+
     client = genai.Client(api_key=api_key)
 
     user_prompt = " ".join(args)
@@ -73,7 +77,8 @@ def generate_content(client, messages, verbose):
                 print(response.text)
                 break
         except Exception as e:
-            return f"Error: {e}"
+            print(f"Error: {e}")
+            return
 
 
 if __name__ == "__main__":
